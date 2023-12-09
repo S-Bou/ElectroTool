@@ -23,7 +23,7 @@ root = Tk()
 root.title("ElectroBouTool")
 center_window(firstWidth, firstHeight)
 root.resizable(FALSE, FALSE)
-root.iconbitmap("lightning-bolt-16.ico")
+root.iconbitmap("resources\lightning-bolt-16.ico")
 
 #---------------------------------- MENU ACTIONS ---------------------------------------------
 def menuInit():
@@ -125,7 +125,7 @@ main_frame.pack(fill="both", expand=True)
 
 divider_frame = Frame(root, width=firstWidth, height=firstHeight, bg="red")
 
-bg = PhotoImage(file="backgrounddt.png")
+bg = PhotoImage(file="resources/backgrounddt.png")
 bg_label_divider = Label(divider_frame, image=bg)
 bg_label_divider.place(x=0, y=0, relwidth=1, relheight=1)
 
