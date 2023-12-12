@@ -39,7 +39,6 @@ def menuExit():
 
 def menuDivider():
     hide_all_frames()
-
     divider_frame.pack(fill="both", expand=True)
 
     entri_divider_frame.pack()
@@ -79,11 +78,41 @@ def menuDivider():
 
     button_reset=Button(entri_divider_frame, text="Clear all", font=('Arial', 12), command=clearAll)
     button_reset.grid(row=4, column=2, sticky="w", padx=10, pady=10)
-    #button_reset.add_command(command=clearAll)
 
 def menuResistor():
     hide_all_frames()
     resistor_frame.pack(fill="both", expand=True)
+
+    entri_res_frame.pack()
+    entri_res_frame.pack_propagate(False)
+    entri_res_frame.place(x=350, y=15)
+
+    res_labelR1 = Label(entri_res_frame, text="R1:", bg="white", font=('Arial', 25))
+    res_labelR1.grid(row=1, column=0, padx=10, pady=10)
+    res_squareR1=Entry(entri_res_frame, width=10, highlightthickness=2, font=('Arial', 20), justify='center', textvariable=res_varR1)
+    res_squareR1.grid(row=1, column=1, padx=10, pady=10)
+    res_labelR1Units = Label(entri_res_frame, text="Ohms", bg="white", font=('Arial', 25))
+    res_labelR1Units.grid(row=1, column=2, padx=10, pady=10)
+
+    res_labelR2 = Label(entri_res_frame, text="R2:", bg="white", font=('Arial', 25))
+    res_labelR2.grid(row=2, column=0, padx=10, pady=10)
+    res_squareR2=Entry(entri_res_frame, width=10, highlightthickness=2, font=('Arial', 20), justify='center', textvariable=res_varR2)
+    res_squareR2.grid(row=2, column=1, padx=10, pady=10)
+    res_labelR2Units = Label(entri_res_frame, text="Ohms", bg="white", font=('Arial', 25))
+    res_labelR2Units.grid(row=2, column=2, padx=10, pady=10, sticky="w")
+
+    res_labelVout = Label(entri_res_frame, text="Req =", bg="white", font=('Arial', 25))
+    res_labelVout.grid(row=3, column=0, padx=10, pady=10)
+    res_squareVout=Entry(entri_res_frame, width=10, highlightthickness=2, font=('Arial', 20), justify='center', textvariable=res_varReq)
+    res_squareVout.grid(row=3, column=1, padx=10, pady=10)
+    res_labelVoutUnits = Label(entri_res_frame, text="Ohms", bg="white", font=('Arial', 25))
+    res_labelVoutUnits.grid(row=3, column=2, padx=10, pady=10, sticky="w")
+
+    res_button_calculate=Button(entri_res_frame, text="Calculate", font=('Arial', 12), command=calculateResistor)
+    res_button_calculate.grid(row=4, column=1, sticky="w", padx=10, pady=10)
+
+    res_button_reset=Button(entri_res_frame, text="Clear all", font=('Arial', 12), command=res_clearAll)
+    res_button_reset.grid(row=4, column=2, sticky="w", padx=10, pady=10)
 
 def menuLights():
     hide_all_frames()
@@ -112,8 +141,8 @@ menuFile.add_command(label="Exit", command=menuExit)
 
 menuTools = Menu(menubar, tearoff="off")
 menubar.add_cascade(label ="Tools", menu=menuTools)
-menuTools.add_command(label="Divider", command=menuDivider)
-menuTools.add_command(label="Resistor calculate", command=menuResistor)
+menuTools.add_command(label="Divider calculator", command=menuDivider)
+menuTools.add_command(label="Resistor calculator", command=menuResistor)
 
 menuAutomation = Menu(menubar, tearoff="off")
 menubar.add_cascade(label ="Automation", menu=menuAutomation)
@@ -130,12 +159,23 @@ menubar.add_cascade(label ="Help", menu=menuHelp)
 menuHelp.add_command(label="License", command=doNothing)
 menuHelp.add_command(label="About", command=doNothing)
 
-#---------------------------------- MAIN FRAME ---------------------------------------------
+#---------------------------------- MAIN FRAME ------------------------------------------------
 
 main_frame = Frame(root, width=firstWidth, height=firstHeight, bg="green")
+
+bgmain = PhotoImage(file="resources/mainwin.png")
+bg_label_main = Label(main_frame, image=bgmain)
+bg_label_main.place(x=0, y=0, relwidth=1, relheight=1)
+
 main_frame.pack(fill="both", expand=True)
 
-#---------------------------------- DIVIDER TOOL ---------------------------------------------
+main_button_divider=Button(main_frame, text="Divider calculator", font=('Arial', 12), command=menuDivider)
+main_button_divider.place(x=165, y=400)
+
+main_button_res=Button(main_frame, text="Resistor calculate", font=('Arial', 12), command=menuResistor)
+main_button_res.place(x=465, y=400)
+
+#---------------------------------- DIVIDER TOOL -----------------------------------------------
 
 divider_frame = Frame(root, width=firstWidth, height=firstHeight, bg="red")
 
@@ -214,11 +254,53 @@ def clearAll():
     varVout.set("")
 #---------------------------------- BUTTONS DIVIDER END -----------------------------------------
 
-#---------------------------------- CALCULATOR RESISTOR TOOL ---------------------------------------------
+#---------------------------------- CALCULATOR RESISTOR TOOL ------------------------------------
 
 resistor_frame = Frame(root, width=firstWidth, height=firstHeight, bg="blue")
 
-#---------------------------------- DDBB MANAGER TOOL ---------------------------------------------
+bgres = PhotoImage(file="resources/resparallel.png")
+bg_label_res = Label(resistor_frame, image=bgres)
+bg_label_res.place(x=0, y=0, relwidth=1, relheight=1)
+
+entri_res_frame = Frame(resistor_frame, width=300, height=300, bd=5, bg="white")
+
+#---------------------------------- BUTTONS RESISTOR ---------------------------------------------
+res_varR1=StringVar()
+res_varR2=StringVar()
+res_varReq=StringVar()
+
+def calculateResistor():
+    data = (res_varR1.get(), res_varR2.get())
+    #print(data)
+    j=0
+    for i in range(2):
+        if data[i] == '':
+            j+=1
+            #print(f"Campos vacios: {j}")
+
+    if j >= 1:
+        messagebox.showwarning("Warninig", "Insert the value of R1 and R2.")
+        res_clearAll()
+
+    else:
+        res_stringR1 = res_varR1.get()
+        res_stringR2 = res_varR2.get()    
+
+        R1 = int(res_stringR1)
+        R2 = int(res_stringR2)
+
+        Req = int(1/((1/R1) + (1/R2)))
+        res_varReq.set("{: d}".format(Req))
+
+def res_clearAll():
+
+    res_varR1.set("")
+    res_varR2.set("")
+    res_varReq.set("")
+
+#---------------------------------- BUTTONS RESISTOR END -----------------------------------------
+
+#---------------------------------- DDBB MANAGER TOOL --------------------------------------------
 
 auto_lights_frame = Frame(root, width=firstWidth, height=firstHeight, bg="yellow")
 
