@@ -1,12 +1,19 @@
 from tkinter import *
 from tkinter import messagebox
 from PIL import Image
+import dbmanager as dbm
 
+#---------------------------------- VARIABLES ---------------------------------------------
 firstWidth = 775
 firstHeight = 600
 
 data_frame_width = 300
 data_frame_height =350
+
+global green_state
+global red_state
+
+#---------------------------------- END VARIABLES ---------------------------------------------
 
 def center_window(width=500, height=240):
 
@@ -115,8 +122,27 @@ def menuResistor():
     res_button_reset.grid(row=4, column=2, sticky="w", padx=10, pady=10)
 
 def menuLights():
+    global green_state
+    global red_state
+
     hide_all_frames()
+
+    green_state = dbm.get_dev_status('green')
+    red_state = dbm.get_dev_status('red')
+
     auto_lights_frame.pack(fill="both", expand=True)
+
+    green_button_label.pack(pady=20, padx=20)
+    green_button_label.place(x=100, y=100)
+    green_button.pack(pady=20)
+    green_button.place(x=100, y=150)
+    green_switch()
+
+    red_button_label.pack(pady=20, padx=20)
+    red_button_label.place(x=450, y=100)
+    red_button.pack(pady=20)
+    red_button.place(x=450, y=150)
+    red_switch()    
 
 def doNothing():
     pass
@@ -246,7 +272,6 @@ def calculateDivider():
             Vout = R2/(R1+R2)*Vin
             varVout.set("{: .3f}".format(Vout))
 
-
 def clearAll():
     varVin.set("")
     varR1.set("")
@@ -302,6 +327,53 @@ def res_clearAll():
 
 #---------------------------------- DDBB MANAGER TOOL --------------------------------------------
 
-auto_lights_frame = Frame(root, width=firstWidth, height=firstHeight, bg="yellow")
+auto_lights_frame = Frame(root, width=firstWidth, height=firstHeight)
+
+#---------------------------------- BUTTONS CONTROL LIGHTS ---------------------------------------------
+#---------------------------------- GREEN BUTTON -------------------------------------------------------
+def green_switch():
+    global green_state
+    if green_state == 'off':
+        green_button.config(image=img_button_off)
+        dbm.set_dev_status('green', 'off')
+        green_state = 'on'
+
+    else:
+        green_button.config(image=img_button_on)
+        dbm.set_dev_status('green', 'on')
+        green_state = 'off'
+
+green_button_label = Label(auto_lights_frame,
+    text="Green light",
+    fg="green",
+    font=("Helvetica", 32))
+
+img_button_on = PhotoImage(file="resources/b_on.png")
+img_button_off = PhotoImage(file="resources/b_off.png")
+
+green_button = Button(auto_lights_frame, image=img_button_on, bd=0, command=green_switch)
+
+#---------------------------------- RED BUTTON ---------------------------------------------------------
+
+def red_switch():
+    global red_state
+    if red_state == 'off':
+        red_button.config(image=img_button_off)
+        dbm.set_dev_status('red', 'off')
+        red_state = 'on'
+
+    else:
+        red_button.config(image=img_button_on)
+        dbm.set_dev_status('red', 'on')
+        red_state = 'off'
+
+red_button_label = Label(auto_lights_frame,
+    text="Red light",
+    fg="red",
+    font=("Helvetica", 32))
+
+red_button = Button(auto_lights_frame, image=img_button_on, bd=0, command=red_switch)
+
+#---------------------------------- BUTTONS CONTROL LIGHTS END -----------------------------------------
 
 root.mainloop()
